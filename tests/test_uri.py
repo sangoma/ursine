@@ -59,3 +59,15 @@ def test_inequality(uri1, uri2):
 ])
 def test_build(kwargs, expect):
     assert URI.build(**kwargs) == URI(expect)
+
+
+@pytest.mark.parametrize('original,attr,new,expect', [
+    ('sip:localhost', 'user', 'jdoe', 'sip:jdoe@localhost'),
+    ('sip:localhost', 'scheme', 'sips', 'sips:localhost'),
+    ('sip:localhost', 'port', 5080, 'sip:localhost:5080'),
+])
+def test_modified_uri_creation(original, attr, new, expect):
+    old_uri = URI(original)
+    new_uri = getattr(old_uri, f'with_{attr}')(new)
+    assert new_uri == URI(expect)
+    assert new_uri != old_uri
