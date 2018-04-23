@@ -2,25 +2,25 @@ import re
 import multidict
 
 
-contact_re = re.compile('("(?P<quoted>[^"]+)" '
-                        '|(?P<unquoted>[^\<"]+) )?'
-                        '\<(?P<the_rest>.*)\>\Z')
+contact_re = re.compile(r'("(?P<quoted>[^"]+)" '
+                        r'|(?P<unquoted>[^\<"]+) )?'
+                        r'\<(?P<the_rest>.*)\>\Z')
 
-scheme_re = re.compile('(?P<scheme>[^:]+):(?P<the_rest>.*)')
+scheme_re = re.compile(r'(?P<scheme>[^:]+):(?P<the_rest>.*)')
 
-user_part_re = re.compile('(?P<user_part>[^:@]+(:[^@:]+)?)@(?P<the_rest>.*)')
+user_part_re = re.compile(r'(?P<user_part>[^:@]+(:[^@:]+)?)@(?P<the_rest>.*)')
 
-host_re = re.compile('(?P<host>('
-                     '\[[^\]]+])|([^:|;]+)'
-                     ')(?P<the_rest>.*)')
+host_re = re.compile(r'(?P<host>('
+                     r'\[[^\]]+])|([^:|;]+)'
+                     r')(?P<the_rest>.*)')
 
-port_re = re.compile(':(?P<port>[^;?]*)(?P<the_rest>.*)')
+port_re = re.compile(r':(?P<port>[^;?]*)(?P<the_rest>.*)')
 
-param_re = re.compile(';(?P<key>[^=]+)=(?P<val>[^;?]*)(?P<the_rest>.*)')
+param_re = re.compile(r';(?P<key>[^=]+)=(?P<val>[^;?]*)(?P<the_rest>.*)')
 
-base_header_re = '(?P<key>[^=]+)=(?P<val>[^&]*)(?P<the_rest>.*)'
-first_header_re = re.compile(f'\?{base_header_re}')
-nth_header_re = re.compile(f'&{base_header_re}')
+base_header_re = r'(?P<key>[^=]+)=(?P<val>[^&]*)(?P<the_rest>.*)'
+first_header_re = re.compile(rf'\?{base_header_re}')
+nth_header_re = re.compile(rf'&{base_header_re}')
 
 
 def parse_contact(uri):
