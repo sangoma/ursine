@@ -119,6 +119,8 @@ class URI:
             raise ValueError('scheme must be `sip` or `sips`')
         if self.port is None:
             self._port = 5061 if self.scheme == 'sips' else 5060
+        if self.port not in range(1, 2**16):
+            raise ValueError(f'port number {self.port} is not valid')
         if self.parameters.get('transport') is None:
             transport = 'tcp' if self.scheme == 'sips' else 'udp'
             self.parameters['transport'] = transport

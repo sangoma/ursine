@@ -3,6 +3,16 @@ from multidict import MultiDict
 from ursine import URI
 
 
+@pytest.mark.parametrize('uri', [
+    'sip:localhost:port',
+    'sip:localhost:0',
+    'sip:localhost:70000',
+])
+def test_invalid(uri):
+    with pytest.raises(ValueError):
+        URI(uri)
+
+
 @pytest.mark.parametrize('uri,expect', [
     ('sip:localhost', 'sip:localhost:5060;transport=udp'),
     ('sips:localhost', 'sips:localhost:5061;transport=tcp'),
