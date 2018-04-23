@@ -75,6 +75,13 @@ def test_build(kwargs, expect):
     ('sip:localhost', 'user', 'jdoe', 'sip:jdoe@localhost'),
     ('sip:localhost;transport=tcp', 'scheme', 'sips', 'sips:localhost:5060'),
     ('sip:localhost', 'port', 5080, 'sip:localhost:5080'),
+    ('sip:jdoe@localhost', 'user', None, 'sip:localhost'),
+    ('"Mark" <sip:localhost>', 'contact', None, 'sip:localhost'),
+    ('sip:user:pass@localhost', 'user', None, 'sip:localhost'),
+    ('sip:localhost', 'user', 'user:pass', 'sip:user:pass@localhost'),
+    ('sip:alice@localhost', 'password', 'pass', 'sip:alice:pass@localhost'),
+    ('sip:localhost', 'transport', 'tcp', 'sip:localhost;transport=tcp'),
+    ('sip:localhost', 'tag', 'bler', 'sip:localhost;transport=udp;tag=bler'),
 ])
 def test_modified_uri_creation(original, attr, new, expect):
     old_uri = URI(original)
