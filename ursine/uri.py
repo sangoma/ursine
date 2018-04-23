@@ -79,7 +79,7 @@ class URI:
     def with_scheme(self, scheme): return self._with(scheme=scheme)
 
     def with_user(self, user):
-        if ':' in user[1:-1]:
+        if user and ':' in user[1:-1]:
             try:
                 new_user, new_pass = user.split(':')
             except ValueError:
