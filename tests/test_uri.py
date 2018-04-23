@@ -7,6 +7,9 @@ from ursine import URI
     'sip:localhost:port',
     'sip:localhost:0',
     'sip:localhost:70000',
+    'sip:localhost?',
+    'sip:localhost;',
+    'sip:localhost&',
 ])
 def test_invalid(uri):
     with pytest.raises(ValueError):
@@ -82,6 +85,16 @@ def test_build(kwargs, expect):
     ('sip:alice@localhost', 'password', 'pass', 'sip:alice:pass@localhost'),
     ('sip:localhost', 'transport', 'tcp', 'sip:localhost;transport=tcp'),
     ('sip:localhost', 'tag', 'bler', 'sip:localhost;transport=udp;tag=bler'),
+    (
+        'sip:localhost', 'parameters',
+        {'maddr': '[::1]', 'foo': 'bar'},
+        'sip:localhost;maddr=[::1];foo=bar',
+    ),
+    (
+        'sip:localhost', 'headers',
+        {'ahhhh': '', 'foo': 'bar'},
+        'sip:localhost?ahhhh=&foo=bar',
+    ),
 ])
 def test_modified_uri_creation(original, attr, new, expect):
     old_uri = URI(original)

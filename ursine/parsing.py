@@ -20,7 +20,7 @@ user_part_re = re.compile(r'(?P<user_part>[^:@]+(:[^@:]+)?)@(?P<the_rest>.*)')
 # extract a host component that may be [...]
 # delimited in order to support ipv6 hosts
 host_re = re.compile(r'(?P<host>('
-                     r'\[[^\]]+])|([^:|;]+)'
+                     r'\[[^\]]+])|([^:;?&]+)'
                      r')(?P<the_rest>.*)')
 
 # optionally discard a : and extract a port number
