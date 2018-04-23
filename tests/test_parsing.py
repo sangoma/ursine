@@ -89,14 +89,6 @@ def test_port(uri, expect_port, expect_the_rest):
     assert the_rest == expect_the_rest
 
 
-@pytest.mark.parametrize('uri', [
-    ':', ':;', ':?', ':65536', ':0', ':port',
-])
-def test_port_fails(uri):
-    with pytest.raises(ValueError):
-        parse_port(uri)
-
-
 @pytest.mark.parametrize('uri,expect_params,expect_the_rest', [
     (';ten=10', {'ten': '10'}, ''),
     (';ten=10;five=5', {'ten': '10', 'five': '5'}, ''),

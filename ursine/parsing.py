@@ -99,7 +99,7 @@ def parse_host(uri):
 
 
 def parse_port(uri):
-    '''Attempt to match a : and valid port number.'''
+    '''Attempt to match a : and port number.'''
     match = port_re.match(uri)
     if match is None:
         return None, uri
@@ -109,9 +109,6 @@ def parse_port(uri):
         port = int(groups['port'])
     except ValueError:
         raise ValueError('port must be an integer')
-
-    if port not in range(1, 2**16):
-        raise ValueError(f'invalid port number {port}')
 
     return port, groups['the_rest']
 
