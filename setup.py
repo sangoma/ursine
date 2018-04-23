@@ -37,9 +37,10 @@ class PyTest(TestCommand):
 
 
 setup(name='ursine',
-      version='0.1',
+      version='0.2',
       description='libarary for SIP url handling/maninupation',
       long_description=readme(),
+      long_description_content_type='text/markdown',
       author='Terry Kerr',
       author_email='t@xnr.ca',
       license='Apache 2',
@@ -49,7 +50,7 @@ setup(name='ursine',
       install_requires=install_requires,
       python_requires='>=3.6',
       classifiers=[
-          'Development Status :: 3 - Alpha',
+          'Development Status :: 4 - Beta',
           'Programming Language :: Python :: 3 :: Only',
           'Programming Language :: Python :: 3.6',
           'Topic :: Communications :: Telephony',
