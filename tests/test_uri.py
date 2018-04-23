@@ -73,7 +73,7 @@ def test_build(kwargs, expect):
 
 @pytest.mark.parametrize('original,attr,new,expect', [
     ('sip:localhost', 'user', 'jdoe', 'sip:jdoe@localhost'),
-    ('sip:localhost', 'scheme', 'sips', 'sips:localhost'),
+    ('sip:localhost;transport=tcp', 'scheme', 'sips', 'sips:localhost:5060'),
     ('sip:localhost', 'port', 5080, 'sip:localhost:5080'),
 ])
 def test_modified_uri_creation(original, attr, new, expect):
