@@ -13,6 +13,11 @@ tests_require = [
 ]
 
 
+def readme():
+    with open('README.md') as fp:
+        return fp.read()
+
+
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
 
@@ -34,6 +39,7 @@ class PyTest(TestCommand):
 setup(name='ursine',
       version='0.1',
       description='libarary for SIP url handling/maninupation',
+      long_description=readme(),
       author='Terry Kerr',
       author_email='t@xnr.ca',
       license='Apache 2',
