@@ -80,7 +80,10 @@ class URI:
 
     def with_user(self, user):
         if ':' in user[1:-1]:
-            new_user, new_pass = user.split(':')
+            try:
+                new_user, new_pass = user.split(':')
+            except ValueError:
+                raise ValueError('user must be either `user` or `user:pass`')
             return self._with(user=new_user, password=new_pass)
         elif user is None and self.password is not None:
             return self._with(user=user, password=None)
