@@ -100,9 +100,15 @@ class URI:
     def with_port(self, port): return self._with(port=port)
 
     def with_parameters(self, parameters):
+        for k, v in parameters.items():
+            if v is None:
+                parameters[k] = ''
         return self._with(parameters=parameters)
 
     def with_headers(self, headers):
+        for k, v in headers.items():
+            if v is None:
+                headers[k] = ''
         return self._with(headers=headers)
 
     def with_transport(self, transport): return self._with(transport=transport)

@@ -87,12 +87,22 @@ def test_build(kwargs, expect):
     ('sip:localhost', 'tag', 'bler', 'sip:localhost;transport=udp;tag=bler'),
     (
         'sip:localhost', 'parameters',
-        {'maddr': '[::1]', 'foo': 'bar'},
-        'sip:localhost;maddr=[::1];foo=bar',
+        {'maddr': '[::1]', 'foo': 'bar', 'x': ''},
+        'sip:localhost;maddr=[::1];foo=bar;x=',
     ),
     (
         'sip:localhost', 'headers',
         {'ahhhh': '', 'foo': 'bar'},
+        'sip:localhost?ahhhh=&foo=bar',
+    ),
+    (
+        'sip:localhost', 'parameters',
+        {'maddr': '[::1]', 'foo': 'bar', 'x': None},
+        'sip:localhost;maddr=[::1];foo=bar;x=',
+    ),
+    (
+        'sip:localhost', 'headers',
+        {'ahhhh': None, 'foo': 'bar'},
         'sip:localhost?ahhhh=&foo=bar',
     ),
 ])
