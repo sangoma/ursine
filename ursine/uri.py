@@ -35,13 +35,7 @@ class URI:
     transport = property(lambda self: self.parameters.get('transport'))
     tag = property(lambda self: self.parameters.get('tag'))
 
-    def __new__(cls, uri: Optional[str]=None):
-        self = object.__new__(cls)
-        if uri:
-            self._build_from_uri(uri)
-        return self
-
-    def _build_from_uri(self, uri: str):
+    def __init__(self, uri: str):
         the_rest = uri
         self._contact, the_rest = parse_contact(the_rest)
         self._scheme, the_rest = parse_scheme(the_rest)
@@ -65,7 +59,7 @@ class URI:
               parameters: Optional[dict]=None,
               headers: Optional[MultiDict]=None,
               ):
-        self = cls()
+        self = object.__new__(cls)
         self._contact = contact
         self._scheme = scheme
         self._user = user
