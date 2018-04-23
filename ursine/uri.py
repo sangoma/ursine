@@ -118,6 +118,7 @@ class URI:
         for parameter in ['transport', 'tag']:
             if parameter in kwargs:
                 new.parameters[parameter] = kwargs[parameter]
+        new._validate_and_default()
         return new
 
     def _validate_and_default(self):
@@ -133,6 +134,10 @@ class URI:
         if self.parameters.get('transport') is None:
             transport = 'tcp' if self.scheme == 'sips' else 'udp'
             self.parameters['transport'] = transport
+        else:
+            if self.scheme == 'sips' and self.transport == 'udp':
+                raise ValueError(f'sips uris *must* use reliable transports,'
+                                 f' {self.transport} is not reliable.')
 
     def __deepcopy__(self):
         return URI.build(
