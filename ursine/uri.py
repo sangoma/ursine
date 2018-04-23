@@ -1,3 +1,4 @@
+'''URI object for parsing/building sip URIs with optional contact.'''
 import copy
 from typing import Optional
 from multidict import MultiDict
@@ -36,6 +37,7 @@ class URI:
     tag = property(lambda self: self.parameters.get('tag'))
 
     def __init__(self, uri: str):
+        '''Parse a uri string into a URI.'''
         the_rest = uri
         self._contact, the_rest = parse_contact(the_rest)
         self._scheme, the_rest = parse_scheme(the_rest)
@@ -59,6 +61,7 @@ class URI:
               parameters: Optional[dict]=None,
               headers: Optional[MultiDict]=None,
               ):
+        '''Build a URI from kwargs for each component.'''
         self = object.__new__(cls)
         self._contact = contact
         self._scheme = scheme
@@ -115,6 +118,9 @@ class URI:
         return new
 
     def _validate_and_default(self):
+        '''Populate default port/transport if not explicitly
+        given by uri string / build args, and ensure port is
+        a valid value.'''
         if self.scheme not in ('sip', 'sips'):
             raise ValueError('scheme must be `sip` or `sips`')
         if self.port is None:
@@ -138,6 +144,13 @@ class URI:
         )
 
     def __str__(self):
+        '''Give a normalized string representation of the URI.
+
+        Normalization here means applying these rules:
+            * only place uri in <> brackets if the contact is defined
+            * always explicitly specify the port
+            * always explicitly specify the transport parameter
+        '''
         if self.user and self.password:
             user = f'{self.user}:{self.password}@'
         elif self.user:
