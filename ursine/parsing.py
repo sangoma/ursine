@@ -3,6 +3,12 @@ import re
 import multidict
 
 
+# optionally extract headers that appear after
+# a <> delimited contact, discarding the space
+# between them if it exists
+post_params_re = re.compile(r'(?P<the_rest>[^\>]*\>)'
+                            r' ?(?P<params>.*)\Z')
+
 # optionally extract either a quoted or unquoted
 # contact name and extract the rest discarding the <>
 # brackets if present
@@ -35,6 +41,21 @@ base_header_re = r'(?P<key>[^=]+)=(?P<val>[^&]*)(?P<the_rest>.*)'
 first_header_re = re.compile(rf'\?{base_header_re}')
 # match a & then a key=val pair - matches (n>1)th headers
 nth_header_re = re.compile(rf'&{base_header_re}')
+
+
+def parse_post_params(uri):
+    '''Attempt to match on headers after
+    a contact+uri combination.
+
+    Ex: `"User" <sip:localhost"> ;tag=abc`
+        should extract the `;tag=abc`
+    '''
+    match = post_params_re.match(uri)
+    if not match:
+        return None, uri
+
+    groups = match.groupdict()
+    return groups['params'], groups['the_rest']
 
 
 def parse_contact(uri):
@@ -113,19 +134,31 @@ def parse_port(uri):
     return port, groups['the_rest']
 
 
-def parse_parameters(uri):
-    '''Attempt to match many ;key=val pairs.'''
+def parse_parameters(uri, post_params=None):
+    '''Attempt to match many ;key=val pairs.
+
+    If post_params is not None it will also be
+    parsed and used to populate the parameters.
+    '''
     the_rest = uri
     params = {}
 
-    match = param_re.match(the_rest)
-    while match:
-        groups = match.groupdict()
-        if params.get(groups['key']):
-            raise ValueError('parameters must be unique')
-        params[groups['key']] = groups['val']
-        the_rest = groups['the_rest']
+    def parse_all(the_rest):
         match = param_re.match(the_rest)
+        while match:
+            groups = match.groupdict()
+            if params.get(groups['key']):
+                raise ValueError('parameters must be unique')
+            params[groups['key']] = groups['val']
+            the_rest = groups['the_rest']
+            match = param_re.match(the_rest)
+        return the_rest
+
+    the_rest = parse_all(the_rest)
+    if post_params:
+        the_rest_post = parse_all(post_params)
+        if the_rest_post:
+            raise ValueError(f'could not parse {the_rest_post}')
 
     return params, the_rest
 

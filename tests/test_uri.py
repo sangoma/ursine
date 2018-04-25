@@ -34,7 +34,9 @@ def test_to_str(uri, expect):
     ('sip:localhost', 'sip:localhost;transport=udp'),
     ('<sip:localhost>', 'sip:localhost'),
     ('Alice <sip:localhost>', '"Alice" <sip:localhost>'),
-    ('SIP:localhost', 'sip:localhost')
+    ('SIP:localhost', 'sip:localhost'),
+    ('<sip:localhost>;tag=foo', 'sip:localhost;tag=foo'),
+    ('<sip:localhost> ;tag=foo', 'sip:localhost;tag=foo'),
     # TODO: test different parameter/header orderings?
     #       don't know if either/both are order sensitive
 ])

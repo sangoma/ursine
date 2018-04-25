@@ -3,6 +3,7 @@ import copy
 from typing import Optional
 from multidict import MultiDict
 from .parsing import (
+    parse_post_params,
     parse_contact,
     parse_scheme,
     parse_user_part,
@@ -39,12 +40,13 @@ class URI:
     def __init__(self, uri: str):
         '''Parse a uri string into a URI.'''
         the_rest = uri
+        post_params, the_rest = parse_post_params(the_rest)
         self._contact, the_rest = parse_contact(the_rest)
         self._scheme, the_rest = parse_scheme(the_rest)
         self._user, self._password, the_rest = parse_user_part(the_rest)
         self._host, the_rest = parse_host(the_rest)
         self._port, the_rest = parse_port(the_rest)
-        self._parameters, the_rest = parse_parameters(the_rest)
+        self._parameters, the_rest = parse_parameters(the_rest, post_params)
         self._headers, the_rest = parse_headers(the_rest)
         if len(the_rest) > 0:
             raise ValueError(f'cannot parse {uri}')
