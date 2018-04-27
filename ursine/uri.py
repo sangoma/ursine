@@ -200,6 +200,9 @@ class URI:
         else:
             return uri
 
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self})'
+
     def __eq__(self, other):
         # TODO: are the parameters/headers order-sensitive or not?
         return str(self) == str(other)
