@@ -37,7 +37,7 @@ class PyTest(TestCommand):
 
 
 setup(name='ursine',
-      version='0.2.1',
+      version='0.2.2',
       description='library for SIP url handling/maninupation',
       long_description=readme(),
       long_description_content_type='text/markdown',
