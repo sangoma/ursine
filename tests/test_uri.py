@@ -29,6 +29,14 @@ def test_to_str(uri, expect):
     assert str(URI(uri)) == expect
 
 
+@pytest.mark.parametrize('uri,expect', [
+    ('sip:localhost', 'URI(sip:localhost:5060;transport=udp)'),
+    ('sips:localhost', 'URI(sips:localhost:5061;transport=tcp)'),
+])
+def test_repr(uri, expect):
+    assert repr(URI(uri)) == expect
+
+
 @pytest.mark.parametrize('uri1,uri2', [
     ('sip:localhost', 'sip:localhost'),
     ('sip:localhost', 'sip:localhost;transport=udp'),
