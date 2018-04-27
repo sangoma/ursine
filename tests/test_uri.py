@@ -30,6 +30,19 @@ def test_to_str(uri, expect):
 
 
 @pytest.mark.parametrize('uri,expect', [
+    ('sip:localhost', 'sip:localhost:5060'),
+    ('sips:localhost', 'sips:localhost:5061'),
+    ('<sip:localhost>', 'sip:localhost:5060'),
+    (
+        'John Doe <sip:localhost:5080?x=y&a=b>',
+        'sip:localhost:5080',
+    )
+])
+def test_to_short_uri(uri, expect):
+    assert URI(uri).short_uri() == expect
+
+
+@pytest.mark.parametrize('uri,expect', [
     ('sip:localhost', 'URI(sip:localhost:5060;transport=udp)'),
     ('sips:localhost', 'URI(sips:localhost:5061;transport=tcp)'),
 ])
