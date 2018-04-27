@@ -200,6 +200,16 @@ class URI:
         else:
             return uri
 
+    def short_uri(self):
+        if self.user and self.password:
+            user = f'{self.user}:{self.password}@'
+        elif self.user:
+            user = f'{self.user}@'
+        else:
+            user = ''
+
+        return f'{self.scheme}:{user}{self.host}:{self.port}'
+
     def __repr__(self):
         return f'{self.__class__.__name__}({self})'
 
