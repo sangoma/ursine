@@ -113,3 +113,17 @@ def test_modified_uri_creation(original, attr, new, expect):
     new_uri = getattr(old_uri, f'with_{attr}')(new)
     assert new_uri == URI(expect)
     assert new_uri != old_uri
+
+
+@pytest.mark.parametrize('uri,tag,expect', [
+    ('sip:localhost', None, None),
+    ('sip:localhost', '5654', '5654'),
+    ('sip:localhost;tag=2000', '5654', '5654'),
+    ('sip:localhost;tag=2ace', None, '2ace'),
+])
+def test_tag_generation(uri, tag, expect):
+    new_tag = URI(uri).with_tag(tag).tag
+    if expect is None:
+        assert new_tag
+    else:
+        assert new_tag == expect
