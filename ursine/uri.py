@@ -1,5 +1,7 @@
 '''URI object for parsing/building sip URIs with optional contact.'''
 import copy
+import random
+import string
 from typing import Optional
 from multidict import MultiDict
 from .parsing import (
@@ -12,6 +14,10 @@ from .parsing import (
     parse_parameters,
     parse_headers,
 )
+
+
+def generate_tag():
+    return ''.join([random.choice(string.hexdigits) for n in range(16)])
 
 
 class URI:
@@ -115,7 +121,12 @@ class URI:
 
     def with_transport(self, transport): return self._with(transport=transport)
 
-    def with_tag(self, tag): return self._with(tag=tag)
+    def with_tag(self, tag=None):
+        if tag is None:
+            if self.tag is not None:
+                return self
+            tag = generate_tag()
+        return self._with(tag=tag)
 
     def _with(self, **kwargs):
         new = self.__deepcopy__()
