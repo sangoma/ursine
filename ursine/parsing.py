@@ -1,180 +1,63 @@
-'''Regex based parsing for sip uris.'''
+'''Parsing for SIP URIs.'''
+from collections import namedtuple
+from multidict import MultiDict
 import re
-import multidict
 
 
-# optionally extract headers that appear after
-# a <> delimited contact, discarding the space
-# between them if it exists
-post_params_re = re.compile(r'(?P<the_rest>[^\>]*\>)'
-                            r' ?(?P<params>.*)\Z')
-
-# optionally extract either a quoted or unquoted
-# contact name and extract the rest discarding the <>
-# brackets if present
-contact_re = re.compile(r'("(?P<quoted>[^"]+)" '
-                        r'|(?P<unquoted>[^\<"]+) )?'
-                        r'\<(?P<the_rest>.*)\>\Z')
-
-# extract a scheme, discard the : and extract the rest
-scheme_re = re.compile(r'(?P<scheme>[^:]+):(?P<the_rest>.*)')
-
-# optionally extract a user part (either user
-# or user:pass) and discard the @ symbol
-user_part_re = re.compile(r'(?P<user_part>[^:@]+(:[^@:]+)?)@(?P<the_rest>.*)')
-
-# extract a host component that may be [...]
-# delimited in order to support ipv6 hosts
-host_re = re.compile(r'(?P<host>('
-                     r'\[[^\]]+])|([^:;?&]+)'
-                     r')(?P<the_rest>.*)')
-
-# optionally discard a : and extract a port number
-port_re = re.compile(r':(?P<port>[^;?]*)(?P<the_rest>.*)')
-
-# optionally discard a ; and extract a single key=val pair
-param_re = re.compile(r';(?P<key>[^=]+)=(?P<val>[^;?]*)(?P<the_rest>.*)')
-
-# optionally extract a key=val pair
-base_header_re = r'(?P<key>[^=]+)=(?P<val>[^&]*)(?P<the_rest>.*)'
-# match a ? then a key=val pair - only first header starts with ?
-first_header_re = re.compile(rf'\?{base_header_re}')
-# match a & then a key=val pair - matches (n>1)th headers
-nth_header_re = re.compile(rf'&{base_header_re}')
+ParseResult = namedtuple('ParseResult', (
+    'scheme',
+    'userinfo',
+    'hostport',
+    'parameters',
+    'headers',
+))
 
 
-def parse_post_params(uri):
-    '''Attempt to match on headers after
-    a contact+uri combination.
+uri_re = re.compile(r'(?P<scheme>[^:]+):'
+                    r'((?P<userinfo>[^@]+)@)?'
+                    r'(?P<hostport>[^;?]+)'
+                    r'(;(?P<parameters>[^?]*))?'
+                    r'(\?(?P<headers>.*))?'
+                    )
 
-    Ex: `"User" <sip:localhost"> ;tag=abc`
-        should extract the `;tag=abc`
-    '''
-    match = post_params_re.match(uri)
+
+def parse(uri):
+    '''Parse a SIP URI into the scheme/userinfo/hostport/parameters/headers.'''
+    match = uri_re.match(uri)
     if not match:
-        return None, uri
-
-    groups = match.groupdict()
-    return groups['params'], groups['the_rest']
-
-
-def parse_contact(uri):
-    '''Attempt a contact match, and remove the
-    proper sip uri from a <> pair if present
-    '''
-    match = contact_re.match(uri)
-    if not match:
-        return None, uri
-
-    groups = match.groupdict()
-    contact = groups.get('quoted')
-    if contact is None:
-        contact = groups.get('unquoted')
-
-    return contact, groups['the_rest']
-
-
-def parse_scheme(uri):
-    '''Require a scheme match.'''
-    match = scheme_re.match(uri)
-    if match is None:
-        raise ValueError('no scheme specified')
+        raise ValueError(f"'{uri}' is not a valid SIP URI")
     groups = match.groupdict()
 
-    scheme = groups['scheme'].lower()
-    if scheme not in ('sip', 'sips'):
-        raise ValueError(f'invalid scheme {scheme}')
+    scheme = groups.get('scheme')
+    userinfo = groups.get('userinfo', None)
+    hostport = groups.get('hostport')
 
-    return scheme, groups['the_rest']
-
-
-def parse_user_part(uri):
-    '''Attempt to match user@ or user:pass@.'''
-    match = user_part_re.match(uri)
-    if match is None:
-        return None, None, uri
-    groups = match.groupdict()
-
-    subparts = groups['user_part'].split(':')
-    if len(subparts) == 2:
-        user, password = subparts
+    parameters = {}
+    if groups.get('parameters'):
+        param_pairs = groups.get('parameters').split(';')
     else:
-        user, password = subparts[0], None
+        param_pairs = []
+    for pair in param_pairs:
+        if len(pair.split('=')) != 2:
+            raise ValueError('parameters must be formatted as `key=[val]`')
+        key, val = pair.split('=')
+        parameters[key] = val
 
-    return user, password, groups['the_rest']
+    headers = MultiDict()
+    if groups.get('headers'):
+        header_pairs = groups.get('headers').split('&')
+    else:
+        header_pairs = []
+    for pair in header_pairs:
+        if len(pair.split('=')) != 2:
+            raise ValueError('headers must be formatted as `key=[val]`')
+        key, val = pair.split('=')
+        headers.add(key, val)
 
-
-def parse_host(uri):
-    '''Require a host match.
-
-    The host can either be anything ending
-    with the EOL, a ; or a :, and optionally
-    can be enclosed in [...] to allow
-    containing : characters.
-    '''
-    match = host_re.match(uri)
-    if match is None:
-        raise ValueError('host must be specified')
-    groups = match.groupdict()
-    return groups['host'], groups['the_rest']
-
-
-def parse_port(uri):
-    '''Attempt to match a : and port number.'''
-    match = port_re.match(uri)
-    if match is None:
-        return None, uri
-    groups = match.groupdict()
-
-    try:
-        port = int(groups['port'])
-    except ValueError:
-        raise ValueError('port must be an integer')
-
-    return port, groups['the_rest']
-
-
-def parse_parameters(uri, post_params=None):
-    '''Attempt to match many ;key=val pairs.
-
-    If post_params is not None it will also be
-    parsed and used to populate the parameters.
-    '''
-    the_rest = uri
-    params = {}
-
-    def parse_all(the_rest):
-        match = param_re.match(the_rest)
-        while match:
-            groups = match.groupdict()
-            if params.get(groups['key']):
-                raise ValueError('parameters must be unique')
-            params[groups['key']] = groups['val']
-            the_rest = groups['the_rest']
-            match = param_re.match(the_rest)
-        return the_rest
-
-    the_rest = parse_all(the_rest)
-    if post_params:
-        the_rest_post = parse_all(post_params)
-        if the_rest_post:
-            raise ValueError(f'could not parse {the_rest_post}')
-
-    return params, the_rest
-
-
-def parse_headers(uri):
-    '''Attempt to match a ?key=val pair, then
-    attempt to match many &key=val pairs.
-    '''
-    the_rest = uri
-    headers = multidict.MultiDict()
-
-    match = first_header_re.match(the_rest)
-    while match:
-        groups = match.groupdict()
-        headers.add(groups['key'], groups['val'])
-        the_rest = groups['the_rest']
-        match = nth_header_re.match(the_rest)
-
-    return headers, the_rest
+    return ParseResult(
+        scheme=scheme,
+        userinfo=userinfo,
+        hostport=hostport,
+        parameters=parameters,
+        headers=headers,
+    )
