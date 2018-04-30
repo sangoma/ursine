@@ -1,1 +1,1 @@
-from .uri import URI
+from .uri import URI, URIError
