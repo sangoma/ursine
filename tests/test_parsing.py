@@ -1,5 +1,5 @@
 import pytest
-from ursine.parsing import parse
+from ursine.parsing import parse_uri
 
 
 @pytest.mark.parametrize('uri,expect', [
@@ -7,7 +7,7 @@ from ursine.parsing import parse
     ('sips:localhost', 'sips'),
 ])
 def test_scheme(uri, expect):
-    assert parse(uri).scheme == expect
+    assert parse_uri(uri).scheme == expect
 
 
 @pytest.mark.parametrize('uri', [
@@ -17,7 +17,7 @@ def test_scheme(uri, expect):
 ])
 def test_scheme_fail(uri):
     with pytest.raises(ValueError):
-        parse(uri)
+        parse_uri(uri)
 
 
 @pytest.mark.parametrize('uri,expect', [
@@ -29,7 +29,7 @@ def test_scheme_fail(uri):
     ('sip:[::dead:beef]:5060', '[::dead:beef]:5060'),
 ])
 def test_hostport(uri, expect):
-    assert parse(uri).hostport == expect
+    assert parse_uri(uri).hostport == expect
 
 
 @pytest.mark.parametrize('uri', [
@@ -39,7 +39,7 @@ def test_hostport(uri, expect):
 ])
 def test_hostport_fail(uri):
     with pytest.raises(ValueError):
-        parse(uri)
+        parse_uri(uri)
 
 
 @pytest.mark.parametrize('uri,expect', [
@@ -48,4 +48,4 @@ def test_hostport_fail(uri):
     ('sip:u:p@localhost', 'u:p'),
 ])
 def test_userinfo(uri, expect):
-    assert parse(uri).userinfo == expect
+    assert parse_uri(uri).userinfo == expect
