@@ -2,7 +2,7 @@
 import copy
 from typing import Optional
 from multidict import MultiDict
-from .parsing import parse
+from .parsing import parse_uri
 
 
 class URIError(Exception):
@@ -19,7 +19,7 @@ class URI:
     )
 
     def __init__(self, uri: str):
-        result = parse(uri)
+        result = parse_uri(uri)
         self._scheme = result.scheme
         self._userinfo = result.userinfo
         self._hostport = result.hostport

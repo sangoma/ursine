@@ -4,7 +4,7 @@ from multidict import MultiDict
 import re
 
 
-ParseResult = namedtuple('ParseResult', (
+URIParseResult = namedtuple('URIParseResult', (
     'scheme',
     'userinfo',
     'hostport',
@@ -21,7 +21,7 @@ uri_re = re.compile(r'(?P<scheme>[^:]+):'
                     )
 
 
-def parse(uri):
+def parse_uri(uri):
     '''Parse a SIP URI into the scheme/userinfo/hostport/parameters/headers.'''
     match = uri_re.match(uri)
     if not match:
@@ -54,7 +54,7 @@ def parse(uri):
         key, val = pair.split('=')
         headers.add(key, val)
 
-    return ParseResult(
+    return URIParseResult(
         scheme=scheme,
         userinfo=userinfo,
         hostport=hostport,
