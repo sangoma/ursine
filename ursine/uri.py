@@ -83,6 +83,7 @@ class URI:
         else:
             self._parameters['transport'] = self._default_transport()
         self._validate()
+        return self
 
     scheme = property(lambda self: self._scheme)
     userinfo = property(lambda self: self._userinfo)
@@ -221,9 +222,9 @@ class URI:
             headers = ''
         else:
             param_pairs = ';'.join(['='.join([k, v])
-                                    for k, v in self._parameters.items()])
+                                    for k, v in sorted(self._parameters.items())])
             header_pairs = '&'.join(['='.join([k, v])
-                                     for k, v in self._headers.items()])
+                                     for k, v in sorted(self._headers.items())])
             params = f';{param_pairs}'
             headers = f'?{header_pairs}' if len(header_pairs) else ''
 
