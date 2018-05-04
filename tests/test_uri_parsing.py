@@ -1,5 +1,5 @@
 import pytest
-from ursine.parsing import parse_uri
+from ursine.uri_parsing import parse_uri
 
 
 @pytest.mark.parametrize('uri,expect', [
