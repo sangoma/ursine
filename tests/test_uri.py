@@ -40,3 +40,11 @@ def test_uri(uri, expect):
 def test_invalid(uri):
     with pytest.raises(URIError):
         URI(uri)
+
+
+@pytest.mark.parametrize('uri', [
+    'sip:[::dead:beef]:5060',
+    'sip:[::dead:beef]',
+])
+def test_ipv6_hostport(uri):
+    assert URI(uri).port == 5060
