@@ -2,7 +2,7 @@
 import copy
 from typing import Optional
 from multidict import MultiDict
-from .parsing import parse_uri
+from .uri_parsing import parse_uri
 
 
 class URIError(Exception):
