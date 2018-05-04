@@ -115,7 +115,13 @@ class URI:
 
     @property
     def port(self):
-        if ':' in self._hostport:
+        if '[' in self._hostport:
+            port_part = self._hostport.rpartition(']')[2]
+            if ':' in port_part:
+                return int(port_part[1:])
+            else:
+                return self._default_port()
+        elif ':' in self._hostport:
             return int(self._hostport.split(':')[1])
         else:
             return self._default_port()
