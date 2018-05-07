@@ -6,24 +6,35 @@
 ## installing
 ursine is packaged and available on [pypi](https://pypi.org/project/ursine)
 
-    pip install ursine
+```sh
+pip install ursine
+```
 
 ----
 ## basic usage
 
 ```python
-from ursine import URI
+from ursine import URI, Header
 
-alice_uri = URI('"Alice" <sips:alice@localhost:5080>')
-bob_uri = URI('"Bob" <sips:bob@localhost:5080>')
+# build new URIs / Headers
+uri = URI.build(scheme='sip', host='10.10.10.10', transport='tcp')
+print(uri)  # sip:10.10.10.10;transport=tcp
+header = Header.build(display_name='Alice', uri=uri, tag='xyz')
+print(header)  # "Alice" <sip:10.10.10.10;transport=tcp>;tag=xyz
 
-# URI mutations actually return new, distinct URIs
-modified_uri = alice_uri.with_port(6000)
-assert modified_uri != alice_uri  # True
+# parse existing ones
+uri = URI('sips:[::1]:5080')
+uri.scheme == 'sips'
+uri.host == '[::1]'
+uri.transport == 'tcp'
 
-# optional URI components can be removed
-userless_uri = bob_uri.with_contact(None).with_user(None)
+header = Header('"Bob" <sips:[::1]:5080>;tag=abc')
+header.display_name == 'Bob'
+header.tag == 'abc'
+header.uri.scheme == 'sips'
 
-# URIs can be stringified again for use in other sytems
-print(userless_uri)  # 'sips:localhost:5080;transport=tcp'
+# Header and URI objects are immutable
+alice_uri = URI('sip:alice@10.10.10.10')
+modified_uri = alice_uri.with_user(None)  # 'sip:10.10.10.10;transport=udp'
+modified_uri != alice_uri
 ```
