@@ -9,6 +9,7 @@ multidict = "*"
 [dev-packages]
 pytest = "*"
 "flake8" = "*"
+pytest-benchmark = "*"
 
 [requires]
 python_version = "3.6"

@@ -28,8 +28,9 @@ from ursine import URI, URIError
         ),
     ),
 ])
-def test_uri(uri, expect):
-    assert URI(uri) == expect
+def test_uri(uri, expect, benchmark):
+    uri = benchmark(URI, uri)
+    assert uri == expect
 
 
 @pytest.mark.parametrize('uri', [
