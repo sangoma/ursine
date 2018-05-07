@@ -29,10 +29,33 @@ def test_build(uri, display_name, params, expect):
 @pytest.mark.parametrize('original,attr,new_value,expect', [
     (
         Header('"John" <sip:localhost>'),
-        'display_name',
-        None,
+        'display_name', None,
         Header('<sip:localhost>')
+    ),
+    (
+        Header('<sip:localhost>'),
+        'display_name', 'Alice',
+        Header('"Alice" <sip:localhost>'),
+    ),
+    (
+        Header('<sip:localhost>'),
+        'tag', 'abcde',
+        Header('<sip:localhost>;tag=abcde'),
+    ),
+    (
+        Header('<sip:localhost>;tag=xyz'),
+        'default_tag', 'abcde',
+        Header('<sip:localhost>;tag=xyz'),
+    ),
+    (
+        Header('<sip:localhost>'),
+        'default_tag', 'abcde',
+        Header('<sip:localhost>;tag=abcde'),
     ),
 ])
 def test_with_attr(original, attr, new_value, expect):
     assert getattr(original, f'with_{attr}')(new_value) == expect
+
+
+def test_with_deafult_tag_generation():
+    assert Header('sip:localhost').with_default_tag().tag is not None
