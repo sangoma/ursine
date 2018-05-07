@@ -48,3 +48,17 @@ def test_invalid(uri):
 ])
 def test_ipv6_hostport(uri):
     assert URI(uri).port == 5060
+
+
+@pytest.mark.parametrize('original,attr,new_value', [
+    (URI('sip:localhost'), 'scheme', 'sips'),
+    (URI('sip:localhost'), 'user', 'bob'),
+    (URI('sip:localhost'), 'userinfo', 'bob:pass'),
+    (URI('sip:localhost'), 'host', '127.0.0.1'),
+    (URI('sip:localhost'), 'port', 5080),
+    (URI('sip:localhost'), 'hostport', '127.0.0.1:5080'),
+    (URI('sip:localhost'), 'parameters', {'maddr': '10.10.1.1'}),
+    (URI('sip:localhost'), 'headers', MultiDict({'some': 'value'})),
+])
+def test_immutability(original, attr, new_value):
+    assert original != getattr(original, f'with_{attr}')(new_value)

@@ -59,3 +59,13 @@ def test_with_attr(original, attr, new_value, expect):
 
 def test_with_deafult_tag_generation():
     assert Header('sip:localhost').with_default_tag().tag is not None
+
+
+@pytest.mark.parametrize('original,attr,new_value', [
+    (Header('sip:localhost'), 'display_name', 'Bob'),
+    (Header('"Alice" <sip:localhost>'), 'display_name', 'Bob'),
+    (Header('<sip:localhost>tag=abc'), 'tag', 'xyz'),
+    (Header('<sip:localhost>'), 'parameters', {'key': 'value'}),
+])
+def test_immutability(original, attr, new_value):
+    assert original != getattr(original, f'with_{attr}')(new_value)
