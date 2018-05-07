@@ -24,16 +24,38 @@ class Header:
         '''Build a new Header from kwargs.'''
         self = object.__new__(cls)
         self._uri = uri
-        if display_name and '"' in display_name:
-            raise HeaderError('display name cannot contain `"`')
         self._display_name = display_name
         self._parameters = parameters if parameters else {}
+        self._validate()
         return self
 
     display_name = property(lambda self: self._display_name)
     parameters = property(lambda self: self._parameters)
     uri = property(lambda self: self._uri)
     tag = property(lambda self: self._parameters.get('tag', None))
+
+    def with_display_name(self, display_name):
+        new = copy.deepcopy(self)
+        new._display_name = display_name
+        new._validate()
+        return new
+
+    def with_uri(self, uri):
+        new = copy.deepcopy(self)
+        new._uri = uri
+        new._validate()
+        return new
+
+    def with_parameters(self, parameters):
+        new = copy.deepcopy(self)
+        new._parameters = parameters
+        new._validate()
+        return new
+
+    def _validate(self):
+        '''Ensure correctness of properties.'''
+        if self.display_name and '"' in self.display_name:
+            raise HeaderError('display name cannot contain `"`')
 
     def __str__(self):
         display_name = f'"{self._display_name}" ' if self._display_name else ''
@@ -48,7 +70,7 @@ class Header:
     def __hash__(self):
         return hash(str(self))
 
-    def __deepcopy__(self):
+    def __deepcopy__(self, memo):
         return Header.build(
                 uri=copy.deepcopy(self._uri),
                 display_name=self.display_name,

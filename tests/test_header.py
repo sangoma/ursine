@@ -15,7 +15,8 @@ def test_str(header, expect):
     (URI('sip:localhost'), 'John', {}, '"John" <sip:localhost>'),
     (URI('sip:localhost;x=y'), 'John', {}, '"John" <sip:localhost;x=y>'),
     (URI('sip:localhost'), 'John', {'x': 'y'}, '"John" <sip:localhost>;x=y'),
-    (URI('sip:localhost;x=y'), 'John', {'x': 'y'}, '"John" <sip:localhost;x=y>;x=y'),
+    (URI('sip:localhost;x=y'), 'John', {
+     'x': 'y'}, '"John" <sip:localhost;x=y>;x=y'),
     (URI('sip:localhost'), None, {}, '<sip:localhost>'),
 ])
 def test_build(uri, display_name, params, expect):
@@ -23,3 +24,15 @@ def test_build(uri, display_name, params, expect):
                           display_name=display_name,
                           parameters=params)
     assert header == Header(expect)
+
+
+@pytest.mark.parametrize('original,attr,new_value,expect', [
+    (
+        Header('"John" <sip:localhost>'),
+        'display_name',
+        None,
+        Header('<sip:localhost>')
+    ),
+])
+def test_with_attr(original, attr, new_value, expect):
+    assert getattr(original, f'with_{attr}')(new_value) == expect
