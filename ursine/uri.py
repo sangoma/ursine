@@ -50,11 +50,11 @@ class URI:
         parameter is offered as an argument for convenience.
         '''
         if (user or password) and userinfo:
-            raise ValueError('userinfo and user/password'
-                             ' are mutually exclusive')
+            raise URIError('userinfo and user/password'
+                           ' are mutually exclusive')
         if (host or port) and hostport:
-            raise ValueError('hostport and host/port'
-                             ' are mutually exclusive')
+            raise URIError('hostport and host/port'
+                           ' are mutually exclusive')
 
         self = object.__new__(cls)
         self._scheme = scheme
@@ -135,7 +135,7 @@ class URI:
         if ':' in self._hostport:
             try:
                 if self.port not in range(1, 2**16):
-                    raise ValueError()
+                    raise URIError(f'invalid port {self.port}')
             except ValueError:
                 raise URIError(f'invalid port in hostport: {self._hostport}')
 
