@@ -26,12 +26,14 @@ class Header:
         self._uri = result.uri
 
     @classmethod
-    def build(cls, *, uri, display_name=None, parameters=None):
+    def build(cls, *, uri, display_name=None, parameters=None, tag=None):
         '''Build a new Header from kwargs.'''
         self = object.__new__(cls)
         self._uri = uri
         self._display_name = display_name
         self._parameters = parameters if parameters else {}
+        if tag:
+            self._parameters['tag'] = tag
         self._validate()
         return self
 
