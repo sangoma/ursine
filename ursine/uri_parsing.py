@@ -38,9 +38,10 @@ def parse_uri(uri):
     else:
         param_pairs = []
     for pair in param_pairs:
-        if len(pair.split('=')) != 2:
+        param = pair.split('=')
+        if len(param) != 2:
             raise ValueError('parameters must be formatted as `key=[val]`')
-        key, val = pair.split('=')
+        key, val = param
         parameters[key] = val
 
     headers = MultiDict()

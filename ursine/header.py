@@ -21,4 +21,4 @@ class Header:
 
     def __str__(self):
         display_name = f'"{self._display_name}" ' if self._display_name else ''
-        return f'{display_name}<{str(self._uri)}>'
+        return f'{display_name}<{self._uri}>'
