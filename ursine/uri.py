@@ -247,7 +247,7 @@ class URI:
     def __hash__(self):
         return hash(str(self))
 
-    def __deepcopy__(self):
+    def __deepcopy__(self, memo):
         return URI.build(
             scheme=self._scheme,
             userinfo=self._userinfo,
