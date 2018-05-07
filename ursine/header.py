@@ -5,7 +5,7 @@ from .header_parsing import parse_header
 
 
 def random_tag():
-    return ''.join([random.choice(string.hexdigits) for _ in range(16)])
+    return ''.join(random.choices(string.hexdigits, k=16))
 
 
 class HeaderError(Exception):
@@ -47,13 +47,13 @@ class Header:
         return new
 
     def with_uri(self, uri):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         new._uri = uri
         new._validate()
         return new
 
     def with_parameters(self, parameters):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         new._parameters = parameters
         new._validate()
         return new
@@ -61,7 +61,7 @@ class Header:
     def with_tag(self, tag):
         if self.tag == tag:
             return self
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         if tag:
             new._parameters['tag'] = tag
         elif 'tag' in new._parameters:
@@ -98,9 +98,9 @@ class Header:
     def __hash__(self):
         return hash(str(self))
 
-    def __deepcopy__(self, memo):
+    def __copy__(self):
         return Header.build(
-                uri=copy.deepcopy(self._uri),
+                uri=copy.copy(self._uri),
                 display_name=self.display_name,
-                parameters=copy.copy(self._parameters)
+                parameters=self._parameters,
         )
