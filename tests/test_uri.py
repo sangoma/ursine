@@ -7,7 +7,7 @@ from ursine import URI, URIError
     ('sip:localhost', URI.build(scheme='sip', host='localhost')),
     (
         'sip:localhost;transport=tcp',
-        URI.build(scheme='sip', host='localhost', transport='tcp'),
+        URI.build(scheme='sip', hostport='localhost', transport='tcp'),
     ),
     (
         'sips:localhost;transport=tcp',
