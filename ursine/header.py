@@ -62,6 +62,7 @@ class Header:
         if self.tag == tag:
             return self
         new = copy.copy(self)
+        new._parameters = copy.copy(self._parameters)
         if tag:
             new._parameters['tag'] = tag
         elif 'tag' in new._parameters:
