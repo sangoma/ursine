@@ -150,19 +150,19 @@ class URI:
         return 'udp' if self._scheme == 'sip' else 'tcp'
 
     def with_scheme(self, scheme):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         new._scheme = scheme
         new._validate()
         return new
 
     def with_userinfo(self, userinfo):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         new._userinfo = userinfo
         new._validate()
         return new
 
     def with_user(self, user):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         if self.password:
             new._userinfo = f'{user}:{self.password}'
         else:
@@ -171,7 +171,7 @@ class URI:
         return new
 
     def with_password(self, password):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         if self.user is None:
             raise URIError('cannot set password without user')
         new._userinfo = f'{self.user}:{password}'
@@ -179,13 +179,13 @@ class URI:
         return new
 
     def with_hostport(self, hostport):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         new._hostport = hostport
         new._validate()
         return new
 
     def with_host(self, host):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         if ':' in self._hostport:
             new._hostport = f'{host}:{self.port}'
         else:
@@ -194,7 +194,7 @@ class URI:
         return new
 
     def with_port(self, port):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         if port == self._default_port():
             new._hostport = self.host
         else:
@@ -203,19 +203,19 @@ class URI:
         return new
 
     def with_parameters(self, parameters):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         new._parameters = parameters
         new._validate()
         return new
 
     def with_headers(self, headers):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         new._headers = headers
         new._validate()
         return new
 
     def with_transport(self, transport):
-        new = copy.deepcopy(self)
+        new = copy.copy(self)
         new._parameters['transport'] = transport
         new._validate()
         return new
@@ -247,11 +247,11 @@ class URI:
     def __hash__(self):
         return hash(str(self))
 
-    def __deepcopy__(self, memo):
+    def __copy__(self):
         return URI.build(
             scheme=self._scheme,
             userinfo=self._userinfo,
             hostport=self._hostport,
-            parameters=copy.copy(self._parameters),
-            headers=copy.copy(self._headers),
+            parameters=self._parameters,
+            headers=self._headers,
         )
