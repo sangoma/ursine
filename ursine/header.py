@@ -102,5 +102,5 @@ class Header:
         return Header.build(
                 uri=copy.deepcopy(self._uri),
                 display_name=self.display_name,
-                parameters=copy.deepcopy(self._parameters)
+                parameters=copy.copy(self._parameters)
         )

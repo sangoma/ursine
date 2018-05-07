@@ -252,6 +252,6 @@ class URI:
             scheme=self._scheme,
             userinfo=self._userinfo,
             hostport=self._hostport,
-            parameters=copy.deepcopy(self._parameters),
-            headers=copy.deepcopy(self._headers),
+            parameters=copy.copy(self._parameters),
+            headers=copy.copy(self._headers),
         )
