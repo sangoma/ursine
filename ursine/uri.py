@@ -35,7 +35,7 @@ class URI:
               user: Optional[str]=None,
               password: Optional[str]=None,
               userinfo: Optional[str]=None,
-              host: str,
+              host: Optional[str]=None,
               port: Optional[int]=None,
               hostport: Optional[str]=None,
               parameters: Optional[dict]=None,
@@ -52,9 +52,11 @@ class URI:
         if (user or password) and userinfo:
             raise URIError('userinfo and user/password'
                            ' are mutually exclusive')
-        if (host or port) and hostport:
-            raise URIError('hostport and host/port'
-                           ' are mutually exclusive')
+        if not ((host or port) is None) ^ (hostport is None):
+            raise URIError('hostport and host/port kwargs'
+                           ' are mutually exclusive, but at'
+                           ' least one of host or hostport'
+                           ' must be given')
 
         self = object.__new__(cls)
         self._scheme = scheme
