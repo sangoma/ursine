@@ -61,24 +61,14 @@ class Header:
         return new
 
     def with_tag(self, tag):
-        if self.tag == tag:
+        if tag and self.tag == tag:
             return self
         new = copy.copy(self)
         new._parameters = copy.copy(self._parameters)
-        if tag:
-            new._parameters['tag'] = tag
-        elif 'tag' in new._parameters:
-            del new._parameters['tag']
-        return new
-
-    def with_default_tag(self, tag=None):
-        '''Like `with_tag`, but will only alter
-        the tag if one is not already defined.'''
-        if self.tag:
-            return self
-        if not tag:
+        if tag is None:
             tag = random_tag()
-        return self.with_tag(tag)
+        new._parameters['tag'] = tag
+        return new
 
     def _validate(self):
         '''Ensure correctness of properties.'''
