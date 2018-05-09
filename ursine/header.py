@@ -60,7 +60,7 @@ class Header:
         new._validate()
         return new
 
-    def with_tag(self, tag):
+    def with_tag(self, tag=None):
         if tag and self.tag == tag:
             return self
         new = copy.copy(self)
