@@ -11,6 +11,7 @@ pytest = "*"
 "flake8" = "*"
 pytest-benchmark = "*"
 sphinx = "*"
+sphinx-rtd-theme = "*"
 
 [requires]
 python_version = "3.6"
