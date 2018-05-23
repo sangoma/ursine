@@ -11,6 +11,30 @@ ursine is a SIP URI library intended to be easy to integrate into and use for ot
 and do all the same as well for SIP header values with contained URIs.
 
 
+userinfo and hostport
+---------------------
+
+The SIP spec often refers to the 'userinfo' and 'hostport' meaning the
+username+password and hostname+port respectively in a URI. For convenience
+ursine offers handling the userinfo and hostport either as a single entity
+or individually. The code below shows this with two effectively identical
+ways of creating the same URI.
+
+.. testcode::
+
+   from ursine import URI
+
+   uri1 = URI.build(scheme='sip',
+                    host='localhost',
+                    port=5080,
+                    userinfo='john:pass')
+   uri2 = URI.build(scheme='sip',
+                    hostport='localhost:5080',
+                    user='john',
+                    password='pass')
+   assert uri1 == uri2
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
