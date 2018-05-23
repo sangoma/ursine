@@ -1,6 +1,8 @@
 import copy
 import random
 import string
+import typing as t
+from .uri import URI
 from .header_parsing import parse_header
 
 
@@ -13,20 +15,25 @@ class HeaderError(Exception):
 
 
 class Header:
+    '''A SIP Header (Contact/To/From).'''
     __slots__ = (
         '_display_name',
         '_parameters',
         '_uri',
     )
 
-    def __init__(self, header):
+    def __init__(self, header: str):
         result = parse_header(header)
         self._display_name = result.display_name
         self._parameters = result.parameters
         self._uri = result.uri
 
     @classmethod
-    def build(cls, *, uri, display_name=None, parameters=None, tag=None):
+    def build(cls, *,
+              uri: URI,
+              display_name: t.Optional[str]=None,
+              parameters: t.Optional[t.Dict[str, str]]=None,
+              tag: t.Optional[str]=None) -> 'Header':
         '''Build a new Header from kwargs.'''
         self = object.__new__(cls)
         self._uri = uri
@@ -42,25 +49,34 @@ class Header:
     uri = property(lambda self: self._uri)
     tag = property(lambda self: self._parameters.get('tag', None))
 
-    def with_display_name(self, display_name):
+    def with_display_name(self, display_name: str):
+        '''Create a new Header from `self` with a specific display name.'''
         new = copy.deepcopy(self)
         new._display_name = display_name
         new._validate()
         return new
 
-    def with_uri(self, uri):
+    def with_uri(self, uri: URI):
+        '''Create a new Header from `self` with a specific URI.'''
         new = copy.copy(self)
         new._uri = uri
         new._validate()
         return new
 
-    def with_parameters(self, parameters):
+    def with_parameters(self, parameters: t.Dict[str, str]):
+        '''Create a new Header from `self` with specific parameters.'''
         new = copy.copy(self)
         new._parameters = parameters
         new._validate()
         return new
 
-    def with_tag(self, tag=None):
+    def with_tag(self, tag: t.Optional[str]=None):
+        '''Create a new Header from `self` guaranteed to have a tag.
+        
+        If tag is defined the resulting Header will always have the
+        given tag value, but if tag is specied or defaulted to None
+        a new Header with a randomly generated tag will be returned.
+        '''
         if tag and self.tag == tag:
             return self
         new = copy.copy(self)
@@ -93,7 +109,7 @@ class Header:
 
     def __copy__(self):
         return Header.build(
-                uri=copy.copy(self._uri),
-                display_name=self.display_name,
-                parameters=self._parameters,
+            uri=copy.copy(self._uri),
+            display_name=self.display_name,
+            parameters=self._parameters,
         )

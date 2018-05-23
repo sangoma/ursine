@@ -1,6 +1,5 @@
-'''URI object for parsing/building SIP URIs.'''
 import copy
-from typing import Optional
+import typing as t
 from multidict import MultiDict
 from .uri_parsing import parse_uri
 
@@ -10,6 +9,7 @@ class URIError(Exception):
 
 
 class URI:
+    '''A SIP URI'''
     __slots__ = (
         '_scheme',
         '_userinfo',
@@ -32,16 +32,16 @@ class URI:
     @classmethod
     def build(cls, *,
               scheme: str,
-              user: Optional[str]=None,
-              password: Optional[str]=None,
-              userinfo: Optional[str]=None,
-              host: Optional[str]=None,
-              port: Optional[int]=None,
-              hostport: Optional[str]=None,
-              parameters: Optional[dict]=None,
-              headers: Optional[MultiDict]=None,
-              transport: Optional[str]=None,
-              ):
+              user: t.Optional[str]=None,
+              password: t.Optional[str]=None,
+              userinfo: t.Optional[str]=None,
+              host: t.Optional[str]=None,
+              port: t.Optional[int]=None,
+              hostport: t.Optional[str]=None,
+              parameters: t.Optional[dict]=None,
+              headers: t.Optional[MultiDict]=None,
+              transport: t.Optional[str]=None,
+              ) -> 'URI':
         '''Build a URI from individual pieces.
 
         Both the userinfo and hostport may be broken
@@ -149,19 +149,22 @@ class URI:
         '''Get the default transport for ourselves.'''
         return 'udp' if self._scheme == 'sip' else 'tcp'
 
-    def with_scheme(self, scheme):
+    def with_scheme(self, scheme: str):
+        '''Create a new URI from `self` with a specific scheme.'''
         new = copy.copy(self)
         new._scheme = scheme
         new._validate()
         return new
 
-    def with_userinfo(self, userinfo):
+    def with_userinfo(self, userinfo: str):
+        '''Create a new URI from `self` with a specific userinfo.'''
         new = copy.copy(self)
         new._userinfo = userinfo
         new._validate()
         return new
 
-    def with_user(self, user):
+    def with_user(self, user: t.Optional[str]):
+        '''Create a new URI from `self` with a specific user.'''
         new = copy.copy(self)
         if self.password:
             new._userinfo = f'{user}:{self.password}'
@@ -170,7 +173,8 @@ class URI:
         new._validate()
         return new
 
-    def with_password(self, password):
+    def with_password(self, password: t.Optional[str]):
+        '''Create a new URI from `self` with a specific password.'''
         new = copy.copy(self)
         if self.user is None:
             raise URIError('cannot set password without user')
@@ -178,13 +182,15 @@ class URI:
         new._validate()
         return new
 
-    def with_hostport(self, hostport):
+    def with_hostport(self, hostport: str):
+        '''Create a new URI from `self` with a specific hostport.'''
         new = copy.copy(self)
         new._hostport = hostport
         new._validate()
         return new
 
-    def with_host(self, host):
+    def with_host(self, host: str):
+        '''Create a new URI from `self` with a specific host.'''
         new = copy.copy(self)
         if ':' in self._hostport:
             new._hostport = f'{host}:{self.port}'
@@ -193,7 +199,8 @@ class URI:
         new._validate()
         return new
 
-    def with_port(self, port):
+    def with_port(self, port: int):
+        '''Create a new URI from `self` with a specific port.'''
         new = copy.copy(self)
         if port == self._default_port():
             new._hostport = self.host
@@ -202,28 +209,32 @@ class URI:
         new._validate()
         return new
 
-    def with_parameters(self, parameters):
+    def with_parameters(self, parameters: t.Dict[str, str]):
+        '''Create a new URI from `self` with specific parameters.'''
         new = copy.copy(self)
         new._parameters = parameters
         new._validate()
         return new
 
-    def with_headers(self, headers):
+    def with_headers(self, headers: MultiDict):
+        '''Create a new URI from `self` with specific headers.'''
         new = copy.copy(self)
         new._headers = headers
         new._validate()
         return new
 
-    def with_transport(self, transport):
+    def with_transport(self, transport: str):
+        '''Create a new URI from `self` with a specific transport.'''
         new = copy.copy(self)
         new._parameters['transport'] = transport
         new._validate()
         return new
 
     def short_str(self):
+        '''Get a string representation without parameters/headers.'''
         return self.__str__(short=True)
 
-    def __str__(self, short=False):
+    def __str__(self, short: bool=False):
         userinfo = f'{self._userinfo}@' if self._userinfo else ''
         if short:
             params = ''
