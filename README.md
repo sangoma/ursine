@@ -1,7 +1,7 @@
 # ursine - a bearable sip uri library
 
 [![Build Status](https://travis-ci.org/sangoma/ursine.svg?branch=master)](https://travis-ci.org/sangoma/ursine)
-[![Doc State](https://readthedocs.org/projects/ursine/badge/?version=latest<Paste>)](https://ursine.readthedocs.io/en/latest/)
+[![Doc State](https://readthedocs.org/projects/ursine/badge/?version=latest)](https://ursine.readthedocs.io/en/latest/)
 
 ----
 ## installing
