@@ -7,26 +7,31 @@
 # http://www.sphinx-doc.org/en/master/config
 
 # -- Path setup --------------------------------------------------------------
+import sys
+import os
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+# Get the project root dir, which is the parent dir of this
+cwd = os.getcwd()
+project_root = os.path.dirname(cwd)
 
+# Insert the project root dir as the first element in the PYTHONPATH.
+# This lets us ensure that the source package is imported, and that its
+# version is used.
+sys.path.insert(0, project_root)
+
+
+import ursine
 
 # -- Project information -----------------------------------------------------
 
 project = 'ursine'
 copyright = '2018, Terry Kerr'
-author = 'Terry Kerr'
+author = ursine.__author__
 
 # The short X.Y version
-version = ''
+version = ursine.__version__
 # The full version, including alpha/beta/rc tags
-release = '0.3.1'
+release = ursine.__version__
 
 
 # -- General configuration ---------------------------------------------------
