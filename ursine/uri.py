@@ -151,21 +151,21 @@ class URI:
 
     def with_scheme(self, scheme: str):
         '''Create a new URI from `self` with a specific scheme.'''
-        new = copy.copy(self)
+        new = copy.deepcopy(self)
         new._scheme = scheme
         new._validate()
         return new
 
     def with_userinfo(self, userinfo: str):
         '''Create a new URI from `self` with a specific userinfo.'''
-        new = copy.copy(self)
+        new = copy.deepcopy(self)
         new._userinfo = userinfo
         new._validate()
         return new
 
     def with_user(self, user: t.Optional[str]):
         '''Create a new URI from `self` with a specific user.'''
-        new = copy.copy(self)
+        new = copy.deepcopy(self)
         if self.password:
             new._userinfo = f'{user}:{self.password}'
         else:
@@ -175,7 +175,7 @@ class URI:
 
     def with_password(self, password: t.Optional[str]):
         '''Create a new URI from `self` with a specific password.'''
-        new = copy.copy(self)
+        new = copy.deepcopy(self)
         if self.user is None:
             raise URIError('cannot set password without user')
         new._userinfo = f'{self.user}:{password}'
@@ -184,14 +184,14 @@ class URI:
 
     def with_hostport(self, hostport: str):
         '''Create a new URI from `self` with a specific hostport.'''
-        new = copy.copy(self)
+        new = copy.deepcopy(self)
         new._hostport = hostport
         new._validate()
         return new
 
     def with_host(self, host: str):
         '''Create a new URI from `self` with a specific host.'''
-        new = copy.copy(self)
+        new = copy.deepcopy(self)
         if ':' in self._hostport:
             new._hostport = f'{host}:{self.port}'
         else:
@@ -201,7 +201,7 @@ class URI:
 
     def with_port(self, port: int):
         '''Create a new URI from `self` with a specific port.'''
-        new = copy.copy(self)
+        new = copy.deepcopy(self)
         if port == self._default_port():
             new._hostport = self.host
         else:
@@ -211,21 +211,21 @@ class URI:
 
     def with_parameters(self, parameters: t.Dict[str, str]):
         '''Create a new URI from `self` with specific parameters.'''
-        new = copy.copy(self)
+        new = copy.deepcopy(self)
         new._parameters = parameters
         new._validate()
         return new
 
     def with_headers(self, headers: MultiDict):
         '''Create a new URI from `self` with specific headers.'''
-        new = copy.copy(self)
+        new = copy.deepcopy(self)
         new._headers = headers
         new._validate()
         return new
 
     def with_transport(self, transport: str):
         '''Create a new URI from `self` with a specific transport.'''
-        new = copy.copy(self)
+        new = copy.deepcopy(self)
         new._parameters['transport'] = transport
         new._validate()
         return new
